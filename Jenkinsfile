@@ -1,24 +1,21 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('*/5 * * * *')
-    }
     stages {
-        stage('Compile') {
+        stage('Build') {
             steps {
-                gradlew('clean', 'classes')
+                echo 'Building..'
             }
         }
-        stage('Unit Tests') {
+        stage('Test') {
             steps {
-                gradlew('test')
+                echo 'Testing..'
             }
-                    }
-	}
-	
-}
-
-def gradlew(String... args) {
-    sh "./gradlew ${args.join(' ')} -s"
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+    }
 }

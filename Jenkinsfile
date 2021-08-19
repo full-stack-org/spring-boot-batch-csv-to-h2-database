@@ -4,7 +4,6 @@ pipeline {
     triggers {
         pollSCM('*/5 * * * *')
     }
-
     stages {
         stage('Compile') {
             steps {
@@ -15,19 +14,9 @@ pipeline {
             steps {
                 gradlew('test')
             }
-            post {
-                always {
-                    junit '**/build/test-results/test/TEST-*.xml'
-                }
-            }
-        }
+                    }
 	}
 	
-	post {
-        failure {
-            mail to: 'gopiraju.seelam@gmail.com', subject: 'Build failed', body: 'Please fix!'
-        }
-    }
 }
 
 def gradlew(String... args) {

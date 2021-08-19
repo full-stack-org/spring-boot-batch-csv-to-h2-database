@@ -1,21 +1,35 @@
 pipeline {
     agent any
 
+    triggers {
+        pollSCM('*/5 * * * *')
+    }
+
     stages {
-        stage('Build') {
+        stage('Compile') {
             steps {
-                sh './gradlew clean build'
+                gradlew('clean', 'classes')
             }
         }
-        stage('Test') {
+        stage('Unit Tests') {
             steps {
-                echo 'Testing..'
+                gradlew('test')
+            }
+            post {
+                always {
+                    junit '**/build/test-results/test/TEST-*.xml'
+                }
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
+	}
+	
+	post {
+        failure {
+            mail to: 'gopiraju.seelam@gmail.com', subject: 'Build failed', body: 'Please fix!'
         }
     }
+}
+
+def gradlew(String... args) {
+    sh "./gradlew ${args.join(' ')} -s"
 }
